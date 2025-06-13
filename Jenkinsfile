@@ -1,27 +1,30 @@
-// Add this line at the very top of your Jenkinsfile
-def flag = true // or false, depending on if you want it to run initially
+def flag = true
 
 pipeline {
     agent any
+    environment { // Add this block
+        NEW_VERSION = '1.3.0' // Define your variable here
+    }
     stages {
         stage('Build') {
             steps {
-                echo 'Building..'
+                echo 'Building Project'
+                echo "Building version ${env.NEW_VERSION}" // Use the environment variable
             }
         }
         stage('Test') {
             when {
                 expression {
-                    return flag == false // Change this to 'true' if you want it to run, 'false' to skip
+                    return flag == false
                 }
             }
             steps {
-                echo 'Testing..'
+                echo 'Testing Project'
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
+                echo 'Deploying Project'
             }
         }
     }
