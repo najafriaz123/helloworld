@@ -1,9 +1,14 @@
 def flag = true
 
 pipeline {
+    parameters { // Add this block
+        string(name: 'VERSION', defaultValue: '1.1.0', description: 'version to deploy on prod')
+        choice(name: 'CHOICE_VERSION', choices: ['1.1.0', '1.2.0', '1.3.0'], description: '')
+        booleanParam(name: 'executeTests', defaultValue: true, description: '')
+    }
     agent any
-    tools { // Add this block
-        maven 'Maven' // 'Maven' must match the name you configured in Jenkins Tools
+    tools {
+        maven 'Maven'
     }
     environment {
         NEW_VERSION = '1.3.0'
@@ -13,14 +18,13 @@ pipeline {
             steps {
                 echo 'Building Project'
                 echo "Building version ${env.NEW_VERSION}"
-                // Use a simple Maven command to show it's working
-                bat 'mvn --version' // Use 'bat' for Windows commands
+                bat 'mvn --version'
             }
         }
         stage('Test') {
             when {
                 expression {
-                    return flag == false
+                    return params.executeTests == true // Use the parameter here
                 }
             }
             steps {
